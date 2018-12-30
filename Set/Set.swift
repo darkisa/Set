@@ -14,10 +14,13 @@ struct Set {
     for symbol in Card.Symbol.all {
       for color in Card.Color.all {
         for shade in Card.Shading.all {
-          cards.append(Card(symbol: symbol, color: color, shading: shade, selected: false))
+          for pipCount in Card.PipCount.all {
+            cards.append(Card(symbol: symbol, color: color, shading: shade, pips: pipCount, selected: false))
+          }
         }
       }
     }
+    cards.shuffle()
   }
 
   var cards = [Card]()

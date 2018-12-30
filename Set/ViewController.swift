@@ -16,8 +16,9 @@ class ViewController: UIViewController {
   }
   
   @IBAction private func newGame() {
+    game.cards.shuffle()
     for (index, card) in cards.enumerated() {
-      if index == 13 { break }
+      if index == cards.count  { break }
       let attributes: [NSAttributedString.Key: Any] = [
         .strokeColor: getSymbolColor(at: index),
         .strokeWidth: getSymbolShading(at: index)
@@ -33,7 +34,7 @@ class ViewController: UIViewController {
   }
   
   private func getSymbol(at index: Int) -> String {
-      return game.cards[index].symbol.getSymbol()
+    return String(repeating: game.cards[index].symbol.getSymbol(), count: game.cards[index].pips.getPipCount())
     }
   
   func getSymbolColor(at index: Int) -> UIColor {

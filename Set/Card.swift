@@ -24,6 +24,20 @@ struct Card {
     }
   }
   
+  enum PipCount {
+    case one, two, three
+    
+    static let all = [PipCount.one, .two, .three]
+    
+    func getPipCount() -> Int {
+      switch self {
+      case .one: return 1
+      case .two: return 2
+      case .three: return 3
+      }
+    }
+  }
+  
   enum Color: Int {
     case red, green, purple
     
@@ -44,6 +58,6 @@ struct Card {
     }
   }
   
-  let symbol: Symbol, color: Color, shading: Shading
+  let symbol: Symbol, color: Color, shading: Shading, pips: PipCount
   var selected = false
 }
