@@ -45,8 +45,3 @@ struct Card {
 //      lhs.unit == rhs.unit
 //  }
 //}
-
-//  func cardMatch<T: Equatable>(firstCard: T, secondCard: T, thirdCard: T) -> Bool {
-//    return (firstCard == secondCard && firstCard == thirdCard) ||
-//            (firstCard != secondCard && firstCard != thirdCard && secondCard != thirdCard)
-//  }

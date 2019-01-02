@@ -24,9 +24,33 @@ struct Set {
   }
 
   var cards = [Card]()
-  var selectedCardsIndex = [Int]()
+  var indicesOfSelectedCards = [Int]()
+  var deselectedCards = [Int]()
+  
+  mutating func addToSelection(newCardIndex: Int) {
+    if indicesOfSelectedCards.contains(newCardIndex) {
+      deselectedCards = [indicesOfSelectedCards.remove(at: indicesOfSelectedCards.index(of: newCardIndex)!)]
+    } else {
+      indicesOfSelectedCards.append(newCardIndex)
+    }
+  }
+  
+  func numberOfCardsSelected() -> Int {
+    return indicesOfSelectedCards.count
+  }
   
   func doSelectedCardsMatch() -> Bool {
-    return false
+    let cardOne = cards[indicesOfSelectedCards[0]]
+    let cardTwo = cards[indicesOfSelectedCards[1]]
+    let cardThree = cards[indicesOfSelectedCards[2]]
+    return cardMatch(firstCard: cardOne.symbol, secondCard: cardTwo.symbol, thirdCard: cardThree.symbol) &&
+            cardMatch(firstCard: cardOne.pips, secondCard: cardTwo.pips, thirdCard: cardThree.pips) &&
+            cardMatch(firstCard: cardOne.color, secondCard: cardTwo.color, thirdCard: cardThree.color) &&
+            cardMatch(firstCard: cardOne.shading, secondCard: cardTwo.shading, thirdCard: cardThree.shading)
+  }
+  
+  func cardMatch<T: Equatable>(firstCard: T, secondCard: T, thirdCard: T) -> Bool {
+    return (firstCard == secondCard && firstCard == thirdCard) ||
+            (firstCard != secondCard && firstCard != thirdCard && secondCard != thirdCard)
   }
 }

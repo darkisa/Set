@@ -11,21 +11,44 @@ import UIKit
 class ViewController: UIViewController {
   @IBOutlet private var cards: [UIButton]!
   @IBAction func touchCard(_ sender: UIButton) {
-    if game.selectedCardsIndex.count < 3 {
-      let touchedCardIndex = cards.index(of: sender)!
-      if game.selectedCardsIndex.contains(touchedCardIndex) {
-        game.selectedCardsIndex.remove(at: game.selectedCardsIndex.index(of: touchedCardIndex)!)
-      } else {
-          game.selectedCardsIndex.append(touchedCardIndex)
-        if game.selectedCardsIndex.count == 3 {
-          
-        }
+    let touchedCardIndex = cards.index(of: sender)!
+    game.addToSelection(newCardIndex: touchedCardIndex)
+    if game.numberOfCardsSelected() == 3 {
+      if game.doSelectedCardsMatch() {
+        print("Works")
       }
+      highlightSelectedCards()
+    } else {
+      highlightSelectedCards()
     }
   }
   
   @IBAction private func newGame() {
     game.cards.shuffle()
+    setAttributesOfCards()
+  }
+  
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    newGame()
+  }
+  
+  private func highlightSelectedCards() {
+    if game.deselectedCards.count > 0 { deselectCards() }
+    for index in game.indicesOfSelectedCards {
+      let card = cards[index]
+      card.layer.borderWidth = 3.0
+      card.layer.borderColor = UIColor.blue.cgColor
+    }
+  }
+  
+  private func deselectCards() {
+    for index in game.deselectedCards {
+      cards[index].layer.borderWidth = 0
+    }
+  }
+  
+  private func setAttributesOfCards() {
     for (index, card) in cards.enumerated() {
       if index == cards.count  { break }
       let shading = getSymbolShading(at: index)
@@ -36,11 +59,6 @@ class ViewController: UIViewController {
       let attributedText = NSAttributedString(string: getSymbol(at: index), attributes: attributes)
       card.setAttributedTitle(attributedText, for: UIControl.State.normal)
     }
-  }
-  
-  override func viewDidLoad() {
-    super.viewDidLoad()
-    newGame()
   }
   
   private func getSymbol(at index: Int) -> String {
@@ -57,7 +75,7 @@ class ViewController: UIViewController {
     let symbolColor = game.cards[index].color
     switch symbolColor {
     case .red: return UIColor.red
-    case .green: return UIColor.blue
+    case .green: return UIColor.green
     case .purple: return UIColor.purple
     }
   }
@@ -85,6 +103,3 @@ extension Int {
     }
   }
 }
-
-//sender.layer.borderWidth = 3.0
-//sender.layer.borderColor = UIColor.blue.cgColor
