@@ -15,7 +15,7 @@ struct Set {
       for color in Card.Color.all {
         for shade in Card.Shading.all {
           for pipCount in Card.PipCount.all {
-            cards.append(Card(symbol: symbol, color: color, shading: shade, pips: pipCount, selected: false))
+            cards.append(Card(symbol: symbol, color: color, shading: shade, pips: pipCount))
           }
         }
       }
@@ -24,5 +24,9 @@ struct Set {
   }
 
   var cards = [Card]()
+  var selectedCardsIndex = [Int]()
   
+  func doSelectedCardsMatch() -> Bool {
+    return false
+  }
 }

@@ -11,17 +11,27 @@ import UIKit
 class ViewController: UIViewController {
   @IBOutlet private var cards: [UIButton]!
   @IBAction func touchCard(_ sender: UIButton) {
-    sender.layer.borderWidth = 3.0
-    sender.layer.borderColor = UIColor.blue.cgColor
+    if game.selectedCardsIndex.count < 3 {
+      let touchedCardIndex = cards.index(of: sender)!
+      if game.selectedCardsIndex.contains(touchedCardIndex) {
+        game.selectedCardsIndex.remove(at: game.selectedCardsIndex.index(of: touchedCardIndex)!)
+      } else {
+          game.selectedCardsIndex.append(touchedCardIndex)
+        if game.selectedCardsIndex.count == 3 {
+          
+        }
+      }
+    }
   }
   
   @IBAction private func newGame() {
     game.cards.shuffle()
     for (index, card) in cards.enumerated() {
       if index == cards.count  { break }
+      let shading = getSymbolShading(at: index)
       let attributes: [NSAttributedString.Key: Any] = [
-        .strokeColor: getSymbolColor(at: index),
-        .strokeWidth: getSymbolShading(at: index)
+        .strokeWidth: shading,
+        .foregroundColor: (shading == -1 ? getSymbolColor(at: index).withAlphaComponent(0.3) : getSymbolColor(at: index))
       ]
       let attributedText = NSAttributedString(string: getSymbol(at: index), attributes: attributes)
       card.setAttributedTitle(attributedText, for: UIControl.State.normal)
@@ -34,24 +44,34 @@ class ViewController: UIViewController {
   }
   
   private func getSymbol(at index: Int) -> String {
-    return String(repeating: game.cards[index].symbol.getSymbol(), count: game.cards[index].pips.getPipCount())
+    let pipsCount = game.cards[index].pips.rawValue
+    let symbol = game.cards[index].symbol
+    switch symbol {
+    case .triangle: return String(repeating: "■", count: pipsCount)
+    case .square: return String(repeating: "▲", count: pipsCount)
+    case .circle: return String(repeating: "●", count: pipsCount)
     }
+  }
   
-  func getSymbolColor(at index: Int) -> UIColor {
+  private func getSymbolColor(at index: Int) -> UIColor {
     let symbolColor = game.cards[index].color
     switch symbolColor {
     case .red: return UIColor.red
-    case .green: return UIColor.green
+    case .green: return UIColor.blue
     case .purple: return UIColor.purple
     }
   }
   
-  func getSymbolShading(at index: Int) -> Double {
-    return game.cards[index].shading.getShading()
+  private func getSymbolShading(at index: Int) -> Double {
+    let shading = game.cards[index].shading
+    switch shading {
+    case .solid: return 0
+    case .striped: return -1
+    case .open: return 5
+    }
   }
   
   private var game = Set()
-
 }
 
 extension Int {
@@ -65,3 +85,6 @@ extension Int {
     }
   }
 }
+
+//sender.layer.borderWidth = 3.0
+//sender.layer.borderColor = UIColor.blue.cgColor

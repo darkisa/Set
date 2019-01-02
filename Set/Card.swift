@@ -10,54 +10,43 @@ import Foundation
 
 struct Card {
   
-  enum Symbol: Int {
+  let symbol: Symbol, color: Color, shading: Shading, pips: PipCount
+  
+  enum Symbol {
     case triangle, square, circle
     
     static let all = [Symbol.triangle, .square, .circle]
-    
-    func getSymbol() -> String {
-      switch self {
-      case .triangle: return "\u{25B2}"
-      case .square: return "\u{25FC}"
-      case .circle: return "\u{25CF}"
-      }
-    }
   }
   
-  enum PipCount {
-    case one, two, three
+  enum PipCount: Int {
+    case one = 1, two, three
     
     static let all = [PipCount.one, .two, .three]
-    
-    func getPipCount() -> Int {
-      switch self {
-      case .one: return 1
-      case .two: return 2
-      case .three: return 3
-      }
-    }
   }
   
-  enum Color: Int {
+  enum Color {
     case red, green, purple
     
     static let all = [Color.red, .green, .purple]
   }
   
-  enum Shading: Int {
+  enum Shading {
     case solid, striped, open
     
     static let all = [Shading.solid, .striped, .open]
-    
-    func getShading() -> Double {
-      switch self {
-      case .solid: return 0.0
-      case .striped: return 0.5
-      case .open: return -0.5
-      }
-    }
   }
-  
-  let symbol: Symbol, color: Color, shading: Shading, pips: PipCount
-  var selected = false
 }
+
+//extension Card: Equatable {
+//  static func == (lhs: Card, rhs: Card) -> Bool {
+//  return
+//      lhs.symbol == rhs.symbol &&
+//      lhs.street == rhs.street &&
+//      lhs.unit == rhs.unit
+//  }
+//}
+
+//  func cardMatch<T: Equatable>(firstCard: T, secondCard: T, thirdCard: T) -> Bool {
+//    return (firstCard == secondCard && firstCard == thirdCard) ||
+//            (firstCard != secondCard && firstCard != thirdCard && secondCard != thirdCard)
+//  }
