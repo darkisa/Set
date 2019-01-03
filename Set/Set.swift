@@ -26,6 +26,17 @@ struct Set {
   var cards = [Card]()
   var indicesOfSelectedCards = [Int]()
   var deselectedCards = [Int]()
+  var visibleCards = 12
+  
+  mutating func assignNewCards() {
+    for index in indicesOfSelectedCards {
+      if let lastCard = cards.popLast() {
+        cards[index] = lastCard
+      } else { break }
+    }
+    deselectedCards = indicesOfSelectedCards
+    indicesOfSelectedCards.removeAll()
+  }
   
   mutating func addToSelection(newCardIndex: Int) {
     if indicesOfSelectedCards.contains(newCardIndex) {
