@@ -43,12 +43,13 @@ class ViewController: UIViewController {
         cardButton.isHidden = false
       }
       game.numberOfVisibleCards += 3
-    } else { return }
+    } else {
+      sender.isEnabled = false
+    }
   }
   
   @IBAction private func newGame() {
     game = Set()
-    game.cards.shuffle()
     setAttributesOfCardButtons()
   }
   
@@ -77,17 +78,20 @@ class ViewController: UIViewController {
   
   private func setAttributesOfCardButtons() {
     for (index, cardButton) in cardButtons.enumerated() {
-      let card = game.cards[index]
-      let shading = getSymbolShading(of: card)
-      let attributes: [NSAttributedString.Key: Any] = [
-        .strokeWidth: shading,
-        .foregroundColor: (shading == -1 ? getSymbolColor(of: card).withAlphaComponent(0.3) : getSymbolColor(of: card))
-      ]
-      let attributedText = NSAttributedString(string: getSymbol(of: card), attributes: attributes)
-      cardButton.setAttributedTitle(attributedText, for: UIControl.State.normal)
-      cardButton.backgroundColor = #colorLiteral(red: 0.921431005, green: 0.9214526415, blue: 0.9214410186, alpha: 1)
-      if index > game.numberOfVisibleCards {
-        cardButton.isHidden = true
+      if let card = game.cards[index] {
+        let shading = getSymbolShading(of: card)
+        let attributes: [NSAttributedString.Key: Any] = [
+          .strokeWidth: shading,
+          .foregroundColor: (shading == -1 ? getSymbolColor(of: card).withAlphaComponent(0.3) : getSymbolColor(of: card))
+        ]
+        let attributedText = NSAttributedString(string: getSymbol(of: card), attributes: attributes)
+        cardButton.setAttributedTitle(attributedText, for: UIControl.State.normal)
+        cardButton.backgroundColor = #colorLiteral(red: 0.921431005, green: 0.9214526415, blue: 0.9214410186, alpha: 1)
+        if index > game.numberOfVisibleCards {
+          cardButton.isHidden = true
+        }
+      } else {
+          cardButton.isHidden = true
       }
     }
   }

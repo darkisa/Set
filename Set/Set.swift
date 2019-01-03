@@ -23,18 +23,16 @@ struct Set {
     cards.shuffle()
   }
 
-  var cards = [Card]()
+  private(set) var cards = [Card?]()
   var indicesOfSelectedCards = [Int]()
   var deselectedCards = [Int]()
   var numberOfVisibleCards = 11
   var score = 0
-
   
   mutating func assignNewCards() {
+    if numberOfVisibleCards >= cards.count { return }
     for index in indicesOfSelectedCards {
-      if let lastCard = cards.popLast() {
-        cards[index] = lastCard
-      } else { break }
+      cards[index] = cards.popLast()!
     }
     deselectedCards = indicesOfSelectedCards
     indicesOfSelectedCards.removeAll()
@@ -53,9 +51,9 @@ struct Set {
   }
   
   func doSelectedCardsMatch() -> Bool {
-    let cardOne = cards[indicesOfSelectedCards[0]]
-    let cardTwo = cards[indicesOfSelectedCards[1]]
-    let cardThree = cards[indicesOfSelectedCards[2]]
+    let cardOne = cards[indicesOfSelectedCards[0]]!
+    let cardTwo = cards[indicesOfSelectedCards[1]]!
+    let cardThree = cards[indicesOfSelectedCards[2]]!
     return cardMatch(firstCard: cardOne.symbol, secondCard: cardTwo.symbol, thirdCard: cardThree.symbol) &&
             cardMatch(firstCard: cardOne.pips, secondCard: cardTwo.pips, thirdCard: cardThree.pips) &&
             cardMatch(firstCard: cardOne.color, secondCard: cardTwo.color, thirdCard: cardThree.color) &&
