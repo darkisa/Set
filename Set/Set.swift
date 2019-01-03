@@ -26,6 +26,8 @@ struct Set {
   var cards = [Card]()
   var indicesOfSelectedCards = [Int]()
   var deselectedCards = [Int]()
+  var numberOfVisibleCards = 11
+  var score = 0
 
   
   mutating func assignNewCards() {

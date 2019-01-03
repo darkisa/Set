@@ -354,6 +354,20 @@
                                     <constraint firstItem="ELH-VD-VOt" firstAttribute="leading" secondItem="fjb-oX-VMZ" secondAttribute="leading" id="ybo-Jy-EgZ"/>
                                 </constraints>
                             </stackView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Score: 0" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JMJ-3v-lUZ">
+                                <rect key="frame" x="50" y="593" width="275" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Number of Cards Remaining: 81" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IFS-2A-sbL">
+                                <rect key="frame" x="50" y="626" width="275" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" cocoaTouchSystemColor="scrollViewTexturedBackgroundColor"/>
                         <constraints>
@@ -367,6 +381,9 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
+                        <outlet property="Score" destination="JMJ-3v-lUZ" id="2Am-yy-Lsg"/>
+                        <outlet property="cardsRemaining" destination="IFS-2A-sbL" id="Glo-xB-o5L"/>
+                        <outlet property="score" destination="JMJ-3v-lUZ" id="2Cc-XZ-3jP"/>
                         <outletCollection property="cardButtons" destination="rLO-56-C8D" collectionClass="NSMutableArray" id="7Qu-j8-wX4"/>
                         <outletCollection property="cardButtons" destination="8cZ-RB-cDZ" collectionClass="NSMutableArray" id="fs3-ej-qdt"/>
                         <outletCollection property="cardButtons" destination="bsY-eL-cvu" collectionClass="NSMutableArray" id="eMN-xL-GG4"/>
