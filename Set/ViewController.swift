@@ -10,13 +10,17 @@ import UIKit
 
 class ViewController: UIViewController {
   @IBOutlet private var cardButtons: [UIButton]!
+  
   @IBAction func touchCard(_ sender: UIButton) {
     let touchedCardIndex = cardButtons.index(of: sender)!
     game.addToSelection(newCardIndex: touchedCardIndex)
     if game.numberOfCardsSelected() == 3 {
       if game.doSelectedCardsMatch() {
         game.assignNewCards()
-        setAttributesOfCardButtons(range: 0..<game.visibleCards)
+      } else {
+          game.deselectedCards = game.indicesOfSelectedCards
+          deselectCards()
+          game.indicesOfSelectedCards.removeAll()
       }
       highlightSelectedCards()
     } else {
@@ -25,24 +29,25 @@ class ViewController: UIViewController {
   }
   
   @IBAction func dealThreeMoreCards(_ sender: UIButton) {
-    if game.visibleCards == 23 {
-      return
-    } else {
-      game.visibleCards += 3
-      setAttributesOfCardButtons(range: 0..<game.visibleCards)
-    }
+    if let indexOfHiddenButton = cardButtons.firstIndex(where: { $0.isHidden == true }) {
+      for cardButton in cardButtons[indexOfHiddenButton...indexOfHiddenButton + 2] {
+        cardButton.isHidden = false
+      }
+    } else { return }
   }
   
   @IBAction private func newGame() {
     game = Set()
     game.cards.shuffle()
-    setAttributesOfCardButtons(range: 0..<game.visibleCards)
+    setInitialAttributesOfCardButtons()
   }
   
   override func viewDidLoad() {
     super.viewDidLoad()
     newGame()
   }
+  
+  private var game = Set()
   
   private func highlightSelectedCards() {
     if game.deselectedCards.count > 0 { deselectCards() }
@@ -57,27 +62,30 @@ class ViewController: UIViewController {
     for index in game.deselectedCards {
       cardButtons[index].layer.borderWidth = 0
     }
+    game.deselectedCards.removeAll()
   }
   
-  private func setAttributesOfCardButtons(range: Range<Int>) {
-    for cardButton in cardButtons[range] {
-      if let card = game.cards.popLast() {
-        let shading = getSymbolShading(of: card)
-        let attributes: [NSAttributedString.Key: Any] = [
-          .strokeWidth: shading,
-          .foregroundColor: (shading == -1 ? getSymbolColor(of: card).withAlphaComponent(0.3) : getSymbolColor(of: card))
-        ]
-        let attributedText = NSAttributedString(string: getSymbol(of: card), attributes: attributes)
-        cardButton.setAttributedTitle(attributedText, for: UIControl.State.normal)
-        cardButton.backgroundColor = #colorLiteral(red: 0.921431005, green: 0.9214526415, blue: 0.9214410186, alpha: 1)
+  private func setInitialAttributesOfCardButtons() {
+    for (index, cardButton) in cardButtons.enumerated() {
+      let card = game.cards[index]
+      let shading = getSymbolShading(of: card)
+      let attributes: [NSAttributedString.Key: Any] = [
+        .strokeWidth: shading,
+        .foregroundColor: (shading == -1 ? getSymbolColor(of: card).withAlphaComponent(0.3) : getSymbolColor(of: card))
+      ]
+      let attributedText = NSAttributedString(string: getSymbol(of: card), attributes: attributes)
+      cardButton.setAttributedTitle(attributedText, for: UIControl.State.normal)
+      cardButton.backgroundColor = #colorLiteral(red: 0.921431005, green: 0.9214526415, blue: 0.9214410186, alpha: 1)
+      if index > 11 {
+        cardButton.isHidden = true
       }
     }
   }
   
   private func getSymbol(of card: Card) -> String {
     switch card.symbol {
-    case .triangle: return String(repeating: "■", count: card.pips.rawValue)
-    case .square: return String(repeating: "▲", count: card.pips.rawValue)
+    case .triangle: return String(repeating: "▲", count: card.pips.rawValue)
+    case .square: return String(repeating: "■", count: card.pips.rawValue)
     case .circle: return String(repeating: "●", count: card.pips.rawValue)
     }
   }
@@ -97,6 +105,4 @@ class ViewController: UIViewController {
     case .open: return 5
     }
   }
-  
-  private var game = Set()
 }

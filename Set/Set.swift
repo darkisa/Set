@@ -26,7 +26,7 @@ struct Set {
   var cards = [Card]()
   var indicesOfSelectedCards = [Int]()
   var deselectedCards = [Int]()
-  var visibleCards = 12
+
   
   mutating func assignNewCards() {
     for index in indicesOfSelectedCards {
