@@ -18,7 +18,7 @@ class ViewController: UIViewController {
       if game.doSelectedCardsMatch() {
         game.assignNewCards()
         setAttributesOfCardButtons()
-        cardsRemaining.text = "Number of Cards Remaining: \(game.cards.count)"
+        cardsRemaining.text = "Number of Cards Remaining: \(cardsRemainingCount())"
         game.score += 3
         score.text = "Score: \(game.score)"
       } else {
@@ -38,13 +38,14 @@ class ViewController: UIViewController {
   @IBOutlet weak var cardsRemaining: UILabel!
   
   @IBAction func dealThreeMoreCards(_ sender: UIButton) {
-    if let indexOfHiddenButton = cardButtons.firstIndex(where: { $0.isHidden == true }) {
+    if game.numberOfVisibleCards >= 23 {
+      sender.isEnabled = false
+      return
+    } else if let indexOfHiddenButton = cardButtons.firstIndex(where: { $0.isHidden == true && $0.isEnabled == true}) {
       for cardButton in cardButtons[indexOfHiddenButton...indexOfHiddenButton + 2] {
         cardButton.isHidden = false
       }
       game.numberOfVisibleCards += 3
-    } else {
-      sender.isEnabled = false
     }
   }
   
@@ -60,6 +61,10 @@ class ViewController: UIViewController {
   
   private var game = Set()
   
+  private func cardsRemainingCount() -> Int {
+    return game.cards.count > 24 ? game.cards.count : cardButtons.filter { $0.isHidden == false }.count
+  }
+  
   private func highlightSelectedCards() {
     if game.deselectedCards.count > 0 { deselectCards() }
     for index in game.indicesOfSelectedCards {
@@ -71,29 +76,39 @@ class ViewController: UIViewController {
   
   private func deselectCards() {
     for index in game.deselectedCards {
-      cardButtons[index].layer.borderWidth = 0
+      if game.cards.count <= 24 {
+        cardButtons[index].isHidden = true
+        cardButtons[index].isEnabled = false
+      } else {
+        cardButtons[index].layer.borderWidth = 0
+      }
     }
     game.deselectedCards.removeAll()
   }
   
   private func setAttributesOfCardButtons() {
+    let deckSize = game.cards.count
     for (index, cardButton) in cardButtons.enumerated() {
-      if let card = game.cards[index] {
-        let shading = getSymbolShading(of: card)
-        let attributes: [NSAttributedString.Key: Any] = [
-          .strokeWidth: shading,
-          .foregroundColor: (shading == -1 ? getSymbolColor(of: card).withAlphaComponent(0.3) : getSymbolColor(of: card))
-        ]
-        let attributedText = NSAttributedString(string: getSymbol(of: card), attributes: attributes)
+      if index >= deckSize {
+        deselectCards()
+      } else if let card = game.cards[index] {
+        let attributedText = createAttributedString(card: card)
         cardButton.setAttributedTitle(attributedText, for: UIControl.State.normal)
         cardButton.backgroundColor = #colorLiteral(red: 0.921431005, green: 0.9214526415, blue: 0.9214410186, alpha: 1)
         if index > game.numberOfVisibleCards {
           cardButton.isHidden = true
         }
-      } else {
-          cardButton.isHidden = true
       }
     }
+  }
+  
+  private func createAttributedString(card: Card) -> NSAttributedString {
+    let shading = getSymbolShading(of: card)
+    let attributes: [NSAttributedString.Key: Any] = [
+      .strokeWidth: shading,
+      .foregroundColor: (shading == -1 ? getSymbolColor(of: card).withAlphaComponent(0.3) : getSymbolColor(of: card))
+    ]
+    return NSAttributedString(string: getSymbol(of: card), attributes: attributes)
   }
   
   private func getSymbol(of card: Card) -> String {

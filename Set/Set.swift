@@ -30,9 +30,10 @@ struct Set {
   var score = 0
   
   mutating func assignNewCards() {
-    if numberOfVisibleCards >= cards.count { return }
-    for index in indicesOfSelectedCards {
-      cards[index] = cards.popLast()!
+    if cards.count > 24 {
+      for index in indicesOfSelectedCards {
+        cards[index] = cards.popLast()!
+      }
     }
     deselectedCards = indicesOfSelectedCards
     indicesOfSelectedCards.removeAll()
