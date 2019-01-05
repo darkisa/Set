@@ -24,9 +24,15 @@ struct Set {
   }
 
   private(set) var cards = [Card?]()
-  var indicesOfSelectedCards = [Int]()
-  var deselectedCards = [Int]()
-  var numberOfVisibleCards = 11
+  private(set) var indicesOfSelectedCards = [Int]()
+  var indicesOfDeselectedCards = [Int]()
+  var numberOfCardsDealt = 12 {
+    didSet(newTotal) {
+      if newTotal > 81 {
+        numberOfCardsDealt = 81
+      }
+    }
+  }
   var score = 0
   
   mutating func assignNewCards() {
@@ -34,16 +40,25 @@ struct Set {
       for index in indicesOfSelectedCards {
         cards[index] = cards.popLast()!
       }
+    } else {
+      for index in indicesOfSelectedCards {
+        cards[index] = nil
+      }
     }
-    deselectedCards = indicesOfSelectedCards
+    numberOfCardsDealt += 3
+  }
+  
+  mutating func clearSelectedCards() {
+    indicesOfDeselectedCards = indicesOfSelectedCards
     indicesOfSelectedCards.removeAll()
   }
   
   mutating func addToSelection(newCardIndex: Int) {
-    if indicesOfSelectedCards.contains(newCardIndex) {
-      deselectedCards = [indicesOfSelectedCards.remove(at: indicesOfSelectedCards.index(of: newCardIndex)!)]
-    } else {
+    if !indicesOfSelectedCards.contains(newCardIndex) {
       indicesOfSelectedCards.append(newCardIndex)
+    } else {
+      let deselectIndex = indicesOfSelectedCards.index(of: newCardIndex)!
+      indicesOfDeselectedCards.append(indicesOfSelectedCards.remove(at: deselectIndex))
     }
   }
   

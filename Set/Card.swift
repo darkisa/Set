@@ -36,12 +36,3 @@ struct Card {
     static let all = [Shading.solid, .striped, .open]
   }
 }
-
-//extension Card: Equatable {
-//  static func == (lhs: Card, rhs: Card) -> Bool {
-//  return
-//      lhs.symbol == rhs.symbol &&
-//      lhs.street == rhs.street &&
-//      lhs.unit == rhs.unit
-//  }
-//}

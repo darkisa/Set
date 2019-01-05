@@ -16,36 +16,30 @@ class ViewController: UIViewController {
     game.addToSelection(newCardIndex: touchedCardIndex)
     if game.numberOfCardsSelected() == 3 {
       if game.doSelectedCardsMatch() {
-        game.assignNewCards()
-        setAttributesOfCardButtons()
-        cardsRemaining.text = "Number of Cards Remaining: \(cardsRemainingCount())"
-        game.score += 3
-        score.text = "Score: \(game.score)"
+      game.assignNewCards()
+      game.clearSelectedCards()
+      setAttributesOfCardButtons()
+      updateGameMetrics(changeBy: 3)
       } else {
-          game.deselectedCards = game.indicesOfSelectedCards
-          deselectCards()
-          game.indicesOfSelectedCards.removeAll()
-          game.score -= 5
-          score.text = "Score: \(game.score)"
+        game.clearSelectedCards()
+        updateGameMetrics(changeBy: -5)
       }
-      highlightSelectedCards()
-    } else {
-      highlightSelectedCards()
     }
+    highlightSelectedCards()
   }
   
   @IBOutlet weak var score: UILabel!
   @IBOutlet weak var cardsRemaining: UILabel!
   
   @IBAction func dealThreeMoreCards(_ sender: UIButton) {
-    if game.numberOfVisibleCards >= 23 {
+    let visibleCards = cardButtons.filter { $0.isHidden == false}.count
+    if game.cards.count <= 24 || visibleCards >= 24 {
       sender.isEnabled = false
-      return
-    } else if let indexOfHiddenButton = cardButtons.firstIndex(where: { $0.isHidden == true && $0.isEnabled == true}) {
-      for cardButton in cardButtons[indexOfHiddenButton...indexOfHiddenButton + 2] {
-        cardButton.isHidden = false
-      }
-      game.numberOfVisibleCards += 3
+    } else {
+      sender.isEnabled = true
+      game.numberOfCardsDealt += 3
+      updateGameMetrics(changeBy: 0)
+      setVisibilityOfCards()
     }
   }
   
@@ -57,16 +51,39 @@ class ViewController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     newGame()
+    setVisibilityOfCards()
+    updateGameMetrics(changeBy: 0)
   }
   
   private var game = Set()
   
   private func cardsRemainingCount() -> Int {
-    return game.cards.count > 24 ? game.cards.count : cardButtons.filter { $0.isHidden == false }.count
+    return 81 - game.numberOfCardsDealt
+  }
+  
+  private func updateGameMetrics(changeBy: Int) {
+    game.score += changeBy
+    score.text = "Score: \(game.score)"
+    cardsRemaining.text = "Number of Cards Remaining: \(cardsRemainingCount())"
+  }
+  
+  private func setVisibilityOfCards() {
+    for index in cardButtons.indices {
+      if index < game.numberOfCardsDealt && cardButtons[index].isEnabled == true {
+        cardButtons[index].isHidden = false
+      } else {
+        cardButtons[index].isHidden = true
+      }
+    }
   }
   
   private func highlightSelectedCards() {
-    if game.deselectedCards.count > 0 { deselectCards() }
+    for index in game.indicesOfDeselectedCards {
+      let cardButton = cardButtons[index]
+      cardButton.layer.borderWidth = 0
+      cardButton.layer.borderColor = UIColor.clear.cgColor
+    }
+    game.indicesOfDeselectedCards.removeAll()
     for index in game.indicesOfSelectedCards {
       let cardButton = cardButtons[index]
       cardButton.layer.borderWidth = 3.0
@@ -74,30 +91,14 @@ class ViewController: UIViewController {
     }
   }
   
-  private func deselectCards() {
-    for index in game.deselectedCards {
-      if game.cards.count <= 24 {
-        cardButtons[index].isHidden = true
-        cardButtons[index].isEnabled = false
-      } else {
-        cardButtons[index].layer.borderWidth = 0
-      }
-    }
-    game.deselectedCards.removeAll()
-  }
-  
   private func setAttributesOfCardButtons() {
-    let deckSize = game.cards.count
     for (index, cardButton) in cardButtons.enumerated() {
-      if index >= deckSize {
-        deselectCards()
-      } else if let card = game.cards[index] {
+      if let card = game.cards[index] {
         let attributedText = createAttributedString(card: card)
         cardButton.setAttributedTitle(attributedText, for: UIControl.State.normal)
-        cardButton.backgroundColor = #colorLiteral(red: 0.921431005, green: 0.9214526415, blue: 0.9214410186, alpha: 1)
-        if index > game.numberOfVisibleCards {
-          cardButton.isHidden = true
-        }
+      } else {
+        cardButton.isHidden = true
+        cardButton.isEnabled = false
       }
     }
   }
