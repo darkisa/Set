@@ -111,7 +111,9 @@ class ViewController: UIViewController {
     ]
     return NSAttributedString(string: getSymbol(of: card), attributes: attributes)
   }
-  
+}
+
+extension ViewController {
   private func getSymbol(of card: Card) -> String {
     switch card.symbol {
     case .triangle: return String(repeating: "▲", count: card.pips.rawValue)
